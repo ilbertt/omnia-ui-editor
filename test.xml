@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ui bg-image='sample.jpg'>
+    <button id='btn'>
+        <position>(10,10)</position>    <!--required-->
+        <text>increase counter</text>  <!--required-->
+        <image></image>
+        <visible></visible>
+        <dimensions></dimensions>
+        <text-color></text-color>
+        <background-color></background-color>
+        <outline-color></outline-color>
+    </button>
+    <label id='lbl'>
+        <position>(10,40)</position>    <!--required-->
+        <text>count: 0</text>          <!--required-->
+        <image></image>
+        <visible>true</visible>
+        <dimensions></dimensions>
+        <text-color>(255,0,0)</text-color>
+        <background-color></background-color>
+        <outline-color></outline-color>
+    </label>
+</ui>
