@@ -96,7 +96,9 @@ class OmniaUI:
             if element.image:
                 self.image.paste(element.image, element.box[0], mask=element.image)
             else:
-                self.draw.rectangle(element.box, fill=element.background_color, outline=element.outline_color)
+                if element.outline_color:
+                    self.draw.rectangle(element.box, fill=element.background_color, outline=element.outline_color)
+
                 self.draw.text(( element.x0 + element.padding, element.y0 + element.padding ), element.text, fill=element.text_color, font=element.font)
 
     def addElement(self, element):
@@ -323,17 +325,19 @@ class OmniaUI:
                     background_color = elem["background-color"]
                     background_color = make_tuple(background_color)
                     ui_element.setBackgroundColor(background_color)
-                else:
-                    if elem_type == "label":
-                        ui_element.setBackgroundColor(self.background_color)
                 
                 if "outline-color" in elem:
                     outline_color = elem["outline-color"]
                     outline_color = make_tuple(outline_color)
                     ui_element.setOutlineColor(outline_color)
-                else:
-                    if elem_type == "label":
-                        ui_element.setOutlineColor(self.background_color)
+                
+                if "font-size" in elem:
+                    font_size = int(elem["font-size"])
+                    ui_element.setFontSize(font_size)
+                
+                if "padding" in elem:
+                    padding = int(elem["padding"])
+                    ui_element.setPadding(padding)
                 
                 self.addElement(ui_element)
         
@@ -343,10 +347,7 @@ class OmniaUI:
 
 class OmniaUIElement:
 
-    padding = 5
-    default_font = ImageFont.truetype("Arial.ttf", 20)
-
-    def __init__(self, id, element_type, position, text, image=None, clickable=False, visible=True, dimensions=(70,30), text_color=(0,0,0), text_font=None, background_color=(230, 230, 230), outline_color=(166, 166, 166)):
+    def __init__(self, id, element_type, position, text, image=None, clickable=False, visible=True, dimensions=(70,30), text_color=(0,0,0), font_name="Arial.ttf", font_size=20, padding=5, background_color=None, outline_color=None):
 
         # Id
         self.id = id
@@ -355,10 +356,14 @@ class OmniaUIElement:
         self.type = element_type
         
         # Font
-        self.font = self.default_font
-        if text_font:
-            self.font = text_font
+        self.font_size = font_size
+        self.font_name = font_name
         
+        self.font = ImageFont.truetype(self.font_name, self.font_size)
+        
+        # Padding
+        self.padding = padding
+
         # Text
         self.text = text
 
@@ -451,3 +456,26 @@ class OmniaUIElement:
 
     def removeImage(self):
         self.image = None
+
+    def setFont(self, font):
+        self.font = font
+    
+    def getFont(self):
+        return self.font
+    
+    def setFontName(self, font_name):
+        self.font_name = font_name
+        self.font = ImageFont.truetype(self.font_name, self.font_size)
+    
+    def getFontName(self):
+        return self.font_name
+
+    def setFontSize(self, font_size):
+        self.font_size = font_size
+        self.font = ImageFont.truetype(self.font_name, self.font_size)
+    
+    def getFontSize(self):
+        return self.font_size
+    
+    def setPadding(self, padding):
+        self.padding = padding
