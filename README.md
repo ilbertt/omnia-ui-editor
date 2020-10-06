@@ -9,8 +9,8 @@ Install requirements:
 
     pip3 install -r requirements.txt
 
-Launch `main.py` file:
+Launch `editor.py` file:
 
-    python3 main.py
+    python3 editor.py
 
 You can find an UI example in `test.xml`.
