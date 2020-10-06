@@ -139,9 +139,47 @@ class OmniaUI:
             self.labels.pop(element_id)
             self.refresh_image()
         else:
-            #raise ValueError("Element with id '{}' does not exists".format(element_id))
-            self.log.error("Element with id '{}' does not exists".format(element_id))
+            #raise ValueError("Element with id '{}' does not exist".format(element_id))
+            self.log.error("Element with id '{}' does not exist".format(element_id))
     
+    def getElement(self, elem_id):
+        if elem_id in self.buttons:
+            return self.buttons[elem_id]
+        elif elem_id in self.labels:
+            return self.labels[elem_id]
+        
+    def updateElement(self, element):
+        element_id = element.id
+        element_type = element.type
+
+        if element_type == "button":
+            
+            if element_id in self.buttons:
+                # register button
+                self.buttons[element_id] = element
+
+                # draw button
+                self._draw_element(element)
+            
+            else:
+                #raise ValueError("Button with id '{}' does not exist".format(element_id))
+                self.log.error("Button with id '{}' does not exist".format(element_id))
+        
+        if element_type == "label":
+            
+            if element_id in self.labels:
+                # register label
+                self.labels[element_id] = element
+
+                # draw label
+                self._draw_element(element)
+        
+            else:
+                #raise ValueError("Label with id '{}' does not exist".format(element_id))
+                self.log.error("Label with id '{}' does not exist".format(element_id))
+        
+        self.refresh_image()
+
     ### --- ###
 
     ### IMAGE ###
