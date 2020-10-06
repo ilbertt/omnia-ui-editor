@@ -43,6 +43,7 @@ class OmniaUI:
         # Elements
         self.buttons = {}
         self.labels = {}
+        self.lines = {}
         
         # Debug
         self.debug = debug
@@ -93,13 +94,16 @@ class OmniaUI:
 
     def _draw_element(self, element):
         if element.visible:
-            if element.image:
-                self.image.paste(element.image, element.box[0], mask=element.image)
+            if element.type == "line":
+                self.draw.line(element.getXY(), fill=element.color, width=element.width)
             else:
-                if element.outline_color:
-                    self.draw.rectangle(element.box, fill=element.background_color, outline=element.outline_color)
+                if element.image:
+                    self.image.paste(element.image, element.box[0], mask=element.image)
+                else:
+                    if element.outline_color:
+                        self.draw.rectangle(element.box, fill=element.background_color, outline=element.outline_color)
 
-                self.draw.text(( element.x0 + element.padding, element.y0 + element.padding ), element.text, fill=element.text_color, font=element.font)
+                    self.draw.text(( element.x0 + element.padding, element.y0 + element.padding ), element.text, fill=element.text_color, font=element.font)
 
     def addElement(self, element):
         element_id = element.id
@@ -118,7 +122,7 @@ class OmniaUI:
                 #raise ValueError("Button with id '{}' already exists".format(element_id))
                 self.log.error("Button with id '{}' already exists".format(element_id))
         
-        if element_type == "label":
+        elif element_type == "label":
             
             if not element_id in self.labels:
                 # register label
@@ -131,11 +135,27 @@ class OmniaUI:
                 #raise ValueError("Label with id '{}' already exists".format(element_id))
                 self.log.error("Label with id '{}' already exists".format(element_id))
 
+        elif element_type == "line":
+            
+            if not element_id in self.lines:
+                # register line
+                self.lines[element_id] = element
+
+                # draw line
+                self._draw_element(element)
+        
+            else:
+                #raise ValueError("Line with id '{}' already exists".format(element_id))
+                self.log.error("Line with id '{}' already exists".format(element_id))
+
     def removeElement(self, element_id):
         if element_id in self.buttons:
             self.buttons.pop(element_id)
             self.refresh_image()
         elif element_id in self.labels:
+            self.labels.pop(element_id)
+            self.refresh_image()
+        elif element_id in self.lines:
             self.labels.pop(element_id)
             self.refresh_image()
         else:
@@ -147,6 +167,8 @@ class OmniaUI:
             return self.buttons[elem_id]
         elif elem_id in self.labels:
             return self.labels[elem_id]
+        elif elem_id in self.lines:
+            return self.lines[elem_id]
         
     def updateElement(self, element):
         element_id = element.id
@@ -165,7 +187,7 @@ class OmniaUI:
                 #raise ValueError("Button with id '{}' does not exist".format(element_id))
                 self.log.error("Button with id '{}' does not exist".format(element_id))
         
-        if element_type == "label":
+        elif element_type == "label":
             
             if element_id in self.labels:
                 # register label
@@ -177,6 +199,19 @@ class OmniaUI:
             else:
                 #raise ValueError("Label with id '{}' does not exist".format(element_id))
                 self.log.error("Label with id '{}' does not exist".format(element_id))
+        
+        elif element_type == "label":
+            
+            if element_id in self.lines:
+                # register label
+                self.lines[element_id] = element
+
+                # draw label
+                self._draw_element(element)
+        
+            else:
+                #raise ValueError("Line with id '{}' does not exist".format(element_id))
+                self.log.error("Line with id '{}' does not exist".format(element_id))
         
         self.refresh_image()
 
@@ -191,6 +226,9 @@ class OmniaUI:
         
         for label_id in self.labels:
             self._draw_element(self.labels[label_id])
+        
+        for line_id in self.lines:
+            self._draw_element(self.lines[line_id])
         
         if self.debug:
             if self.debug_point:
@@ -212,10 +250,14 @@ class OmniaUI:
     def reset_image(self):
         self.buttons = {}
         self.labels = {}
+        self.lines = {}
         self.background_image = None
         self.background_color = (255,255,255)
 
     def get_image(self):
+        return self.image.copy()
+    
+    def refresh_and_get_image(self):
         self.refresh_image()
         return self.image.copy()
     
@@ -316,68 +358,108 @@ class OmniaUI:
             #print(elem)
             
             if len(elem) > 0:
-                if "position" in elem:
-                    position = elem["position"]
-                    position = make_tuple(position)
+                if elem_type == "line":
+                    if "start" in elem:
+                        start = elem["start"]
+                        start = make_tuple(start)
+                    else:
+                        #raise ValueError("Start property is required (not found in element with id: '{}')".format(elem_id))
+                        self.log.error("Start property is required (not found in element with id: '{}')".format(elem_id))
+                    
+                    if "end" in elem:
+                        end = elem["end"]
+                        end = make_tuple(end)
+                    else:
+                        #raise ValueError("End property is required (not found in element with id: '{}')".format(elem_id))
+                        self.log.error("End property is required (not found in element with id: '{}')".format(elem_id))
+                    
+                    print(start, end)
+                    line_element = OmniaUILine(elem_id, [start, end])
+
+                    if "width" in elem:
+                        width = int(elem["width"])
+                        line_element.setWidth(width)
+                    
+                    if "color" in elem:
+                        color = elem["color"]
+                        color = make_tuple(color)
+                        line_element.setColor(color)
+                    
+                    if "visible" in elem:
+                        visible = elem["visible"]
+                        if visible in ['true', 'True', '1']:
+                            line_element.visible = True
+                        elif visible in ['false', 'False', '0']:
+                            line_element.visible = False
+                    
+                    self.addElement(line_element)
+
                 else:
-                    #raise ValueError("Position property is required (not found in element with id: '{}')".format(elem_id))
-                    self.log.error("Position property is required (not found in element with id: '{}')".format(elem_id))
-                
-                
-                if "text" in elem:
-                    text = elem["text"]
-                else:
-                    #raise ValueError("Text property is required (not found in element with id: '{}')".format(elem_id))
-                    self.log.error("Text property is required (not found in element with id: '{}')".format(elem_id))
+                    if "position" in elem:
+                        position = elem["position"]
+                        position = make_tuple(position)
+                    else:
+                        #raise ValueError("Position property is required (not found in element with id: '{}')".format(elem_id))
+                        self.log.error("Position property is required (not found in element with id: '{}')".format(elem_id))
+                    
+                    
+                    if "text" in elem:
+                        text = elem["text"]
+                    else:
+                        #raise ValueError("Text property is required (not found in element with id: '{}')".format(elem_id))
+                        self.log.error("Text property is required (not found in element with id: '{}')".format(elem_id))
 
-                ui_element = OmniaUIElement(elem_id, elem_type, position, text)
+                    ui_element = OmniaUIElement(elem_id, elem_type, position, text)
 
-                if "image" in elem:
-                    image = elem["image"]
-                    if "text" in image:
-                        img = Image.open(image["text"])
-                        img = img.convert("RGBA")
-                        img = img.resize(image["dimensions"])
-                        ui_element.addImage(img)
-                
-                
-                if "visible" in elem:
-                    visible = elem["visible"]
-                    if visible in ['true', 'True', '1']:
-                        ui_element.visible = True
-                    elif visible in ['false', 'False', '0']:
-                        ui_element.visible = False
+                    if elem_type == "button":
+                        ui_element.clickable = True
 
-                
-                if "dimensions" in elem:
-                    dimensions = elem["dimensions"]
-                    dimensions = make_tuple(dimensions)
-                    ui_element.setDimensions(dimensions)
+                    if "image" in elem:
+                        image = elem["image"]
+                        if "text" in image:
+                            img = Image.open(image["text"])
+                            img = img.convert("RGBA")
+                            img = img.resize(image["dimensions"])
+                            ui_element.addImage(img)
+                    
+                    
+                    if "visible" in elem:
+                        visible = elem["visible"]
+                        if visible in ['true', 'True', '1']:
+                            ui_element.visible = True
+                        elif visible in ['false', 'False', '0']:
+                            ui_element.visible = False
 
-                if "text-color" in elem:
-                    text_color = elem["text-color"]
-                    text_color = make_tuple(text_color)
-                    ui_element.setTextColor(text_color)
+                    
+                    if "dimensions" in elem:
+                        dimensions = elem["dimensions"]
+                        dimensions = make_tuple(dimensions)
+                        ui_element.setDimensions(dimensions)
 
-                if "background-color" in elem:
-                    background_color = elem["background-color"]
-                    background_color = make_tuple(background_color)
-                    ui_element.setBackgroundColor(background_color)
-                
-                if "outline-color" in elem:
-                    outline_color = elem["outline-color"]
-                    outline_color = make_tuple(outline_color)
-                    ui_element.setOutlineColor(outline_color)
-                
-                if "font-size" in elem:
-                    font_size = int(elem["font-size"])
-                    ui_element.setFontSize(font_size)
-                
-                if "padding" in elem:
-                    padding = int(elem["padding"])
-                    ui_element.setPadding(padding)
-                
-                self.addElement(ui_element)
+                    if "text-color" in elem:
+                        text_color = elem["text-color"]
+                        text_color = make_tuple(text_color)
+                        ui_element.setTextColor(text_color)
+
+                    if "background-color" in elem:
+                        background_color = elem["background-color"]
+                        background_color = make_tuple(background_color)
+                        ui_element.setBackgroundColor(background_color)
+                    
+                    if "outline-color" in elem:
+                        outline_color = elem["outline-color"]
+                        outline_color = make_tuple(outline_color)
+                        ui_element.setOutlineColor(outline_color)
+                    
+                    if "font-size" in elem:
+                        font_size = int(elem["font-size"])
+                        ui_element.setFontSize(font_size)
+                    
+                    if "padding" in elem:
+                        padding = int(elem["padding"])
+                        ui_element.setPadding(padding)
+                    
+                    self.addElement(ui_element)
         
         self.refresh_image()
 
@@ -443,7 +525,7 @@ class OmniaUIElement:
         x = coordinates[0]
         y = coordinates[1]
 
-        if (self.x0 - bias <= x <= self.x1 + bias) and (self.y0 - bias <= y <= self.y1 + bias) and self.clickable:
+        if (self.x0 - bias <= x <= self.x1 + bias) and (self.y0 - bias <= y <= self.y1 + bias) and self.clickable and self.visible:
             return True
         else:
             return False
@@ -471,6 +553,9 @@ class OmniaUIElement:
         self.y0 = position[1]
 
         self._update_box()
+    
+    def getPosition(self):
+        return (self.x0, self.y0)
     
     def setDimensions(self, dimensions):
         self.dimensions = dimensions
@@ -517,3 +602,45 @@ class OmniaUIElement:
     
     def setPadding(self, padding):
         self.padding = padding
+
+class OmniaUILine:
+
+    def __init__(self, line_id, xy, width=1, color=(0,0,0), visible=True):
+
+        self.id = line_id
+
+        self.lx0 = xy[0][0]
+        self.ly0 = xy[0][1]
+
+        self.lx1 = xy[1][0]
+        self.ly1 = xy[1][1]
+
+        self.width = width
+
+        self.color = color
+
+        self.visible = visible
+
+        self.type = "line"
+    
+    def setXY(self, xy):
+        self.lx0 = xy[0][0]
+        self.ly0 = xy[0][1]
+
+        self.lx1 = xy[1][0]
+        self.ly1 = xy[1][1]
+    
+    def getXY(self):
+        return [(self.lx0, self.ly0), (self.lx1, self.ly1)]
+    
+    def setWidth(self, width):
+        self.width = width
+    
+    def getWidth(self):
+        return self.width
+    
+    def setColor(self, color):
+        self.color = color
+    
+    def getColor(self):
+        return self.color
