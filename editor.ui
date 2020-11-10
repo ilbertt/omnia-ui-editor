@@ -17,15 +17,22 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="12">
-       <widget class="QLabel" name="label">
+      <item row="1" column="1">
+       <widget class="QLabel" name="file_label">
         <property name="text">
-         <string>Height:</string>
+         <string>hello</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="18">
-       <spacer name="horizontalSpacer">
+      <item row="1" column="6">
+       <widget class="QPushButton" name="open">
+        <property name="text">
+         <string>Open</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <spacer name="horizontalSpacer_5">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -37,8 +44,8 @@
         </property>
        </spacer>
       </item>
-      <item row="1" column="3">
-       <spacer name="horizontalSpacer_3">
+      <item row="1" column="10">
+       <spacer name="horizontalSpacer_6">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -50,31 +57,7 @@
         </property>
        </spacer>
       </item>
-      <item row="1" column="5">
-       <widget class="QPushButton" name="save_as">
-        <property name="text">
-         <string>Save as</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="13">
-       <widget class="QSpinBox" name="height">
-        <property name="maximum">
-         <number>10000</number>
-        </property>
-        <property name="value">
-         <number>240</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="14">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Width:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="20">
+      <item row="3" column="0" colspan="21">
        <widget class="QWidget" name="widget" native="true">
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="1">
@@ -125,32 +108,6 @@
         </layout>
        </widget>
       </item>
-      <item row="1" column="10">
-       <spacer name="horizontalSpacer_6">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="2">
-       <spacer name="horizontalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="1" column="17">
        <spacer name="horizontalSpacer_4">
         <property name="orientation">
@@ -164,17 +121,60 @@
         </property>
        </spacer>
       </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="file_label">
+      <item row="1" column="5">
+       <widget class="QPushButton" name="save_as">
         <property name="text">
-         <string>hello</string>
+         <string>Save as</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="6">
-       <widget class="QPushButton" name="open">
+      <item row="1" column="12">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>Open</string>
+         <string>Height:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="13">
+       <widget class="QSpinBox" name="height">
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="value">
+         <number>240</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="19">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="14">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Width:</string>
         </property>
        </widget>
       </item>
@@ -239,6 +239,13 @@
        <widget class="QPushButton" name="resize">
         <property name="text">
          <string>Resize</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="18">
+       <widget class="QPushButton" name="quit">
+        <property name="text">
+         <string>Quit</string>
         </property>
        </widget>
       </item>

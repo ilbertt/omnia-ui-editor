@@ -26,6 +26,7 @@ class App(QMainWindow):
 		self.save_as_btn = self.findChild(QPushButton,"save_as")
 		self.open_btn = self.findChild(QPushButton,"open")
 		self.resize_btn = self.findChild(QPushButton,"resize")
+		self.quit_btn = self.findChild(QPushButton,"quit")
 
 
 		# Create a spin box in the window
@@ -57,6 +58,7 @@ class App(QMainWindow):
 		self.save_as_btn.clicked.connect(self.save_as_ui)
 		self.open_btn.clicked.connect(self.open_ui)
 		self.resize_btn.clicked.connect(self.resize_ui)
+		self.quit_btn.clicked.connect(self.quit_ui)
 
 		self.showFullScreen()      
 	
@@ -121,12 +123,11 @@ class App(QMainWindow):
 		if name != '':
 			self.fileFullName=name + ".xml"
 			self.file_label.setText(self.fileFullName)
-		
-
-		with open(name + ".xml", "w") as f:
-			#_ = f.read()
-			f.seek(0,0)
-			f.write(text)
+	
+			with open(name + ".xml", "w") as f:
+				#_ = f.read()
+				f.seek(0,0)
+				f.write(text)
 	
 	@pyqtSlot()
 	def save_ui(self):
@@ -140,13 +141,15 @@ class App(QMainWindow):
 
 	@pyqtSlot()
 	def open_ui(self):
-		self.fileFullName, _ = QFileDialog.getOpenFileName(self,"Open UI file", ".","XML files (*.xml)")
+		name, _ = QFileDialog.getOpenFileName(self,"Open UI file", ".","XML files (*.xml)")
 		
-		self.file_label.setText(self.fileFullName)
-		with open(self.fileFullName, "r") as f:
-			content = f.read()
-			self.textbox.setPlainText(content)
-			self.drawImg(content)
+		if name != '':
+			self.fileFullName=name
+			self.file_label.setText(self.fileFullName)
+			with open(self.fileFullName, "r") as f:
+				content = f.read()
+				self.textbox.setPlainText(content)
+				self.drawImg(content)
 
 	@pyqtSlot()
 	def resize_ui(self):
@@ -158,6 +161,10 @@ class App(QMainWindow):
 		self.omniaui.changeOrientation()
 
 		self.drawImg()
+
+	@pyqtSlot()
+	def quit_ui(self):
+		sys.exit(0)
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
