@@ -1,6 +1,6 @@
 import sys
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QPlainTextEdit, QFrame, QLabel, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QPlainTextEdit, QFrame, QLabel, QFileDialog, QSpinBox
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import pyqtSlot
 
@@ -25,18 +25,24 @@ class App(QMainWindow):
 		self.save_btn = self.findChild(QPushButton,"save")
 		self.save_as_btn = self.findChild(QPushButton,"save_as")
 		self.open_btn = self.findChild(QPushButton,"open")
+		self.resize_btn = self.findChild(QPushButton,"resize")
+
+
+		# Create a spin box in the window
+		self.height_box= self.findChild(QSpinBox,"height")
+		self.width_box= self.findChild(QSpinBox,"width")
 
 		# Create filename label
 		self.file_label = self.findChild(QLabel,"file_label")
 		# Create image
-		self.ui_width = 1170
-		self.ui_height = 540
+		ui_width = self.width_box.value()
+		ui_height = self.height_box.value()
 
 		self.img_label = self.findChild(QLabel,"img_label")
 		
 		self.img_label.setFrameShape(QFrame.Panel)        
 
-		self.omniaui = OmniaUI((self.ui_width, self.ui_height))
+		self.omniaui = OmniaUI((ui_width, ui_height))
 
 		self.image = QPixmap()
 
@@ -50,6 +56,8 @@ class App(QMainWindow):
 		self.save_btn.clicked.connect(self.save_ui)
 		self.save_as_btn.clicked.connect(self.save_as_ui)
 		self.open_btn.clicked.connect(self.open_ui)
+		self.resize_btn.clicked.connect(self.resize_ui)
+
 		self.showFullScreen()      
 	
 	def drawImg(self, xml_string=''):
@@ -74,6 +82,10 @@ class App(QMainWindow):
 		self.omniaui.changeOrientation()
 
 		orientation = self.omniaui.getOrientation()
+		width=self.width_box.value()
+		height=self.height_box.value()
+		self.height_box.setValue(width)
+		self.width_box.setValue(height)
 
 		self.drawImg()
 
@@ -135,6 +147,17 @@ class App(QMainWindow):
 			content = f.read()
 			self.textbox.setPlainText(content)
 			self.drawImg(content)
+
+	@pyqtSlot()
+	def resize_ui(self):
+		self.omniaui.height=self.height_box.value()
+		self.omniaui.width=self.width_box.value()
+		
+		#necessary to redraw the image frame on the UI
+		self.omniaui.changeOrientation()
+		self.omniaui.changeOrientation()
+
+		self.drawImg()
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)

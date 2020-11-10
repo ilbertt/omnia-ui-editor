@@ -17,7 +17,64 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="2" column="0" colspan="13">
+      <item row="1" column="12">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Height:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="18">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="3">
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="5">
+       <widget class="QPushButton" name="save_as">
+        <property name="text">
+         <string>Save as</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="13">
+       <widget class="QSpinBox" name="height">
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="value">
+         <number>240</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="14">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Width:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="20">
        <widget class="QWidget" name="widget" native="true">
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="1">
@@ -49,7 +106,7 @@
          <item row="1" column="1">
           <widget class="QLabel" name="img_label">
            <property name="text">
-            <string>TextLabel</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -68,7 +125,7 @@
         </layout>
        </widget>
       </item>
-      <item row="0" column="9">
+      <item row="1" column="10">
        <spacer name="horizontalSpacer_6">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -81,7 +138,7 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="2">
+      <item row="1" column="2">
        <spacer name="horizontalSpacer_5">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -94,7 +151,7 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="10">
+      <item row="1" column="17">
        <spacer name="horizontalSpacer_4">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -107,35 +164,35 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="1">
        <widget class="QLabel" name="file_label">
         <property name="text">
          <string>hello</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="6">
+      <item row="1" column="6">
        <widget class="QPushButton" name="open">
         <property name="text">
          <string>Open</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
+      <item row="1" column="4">
        <widget class="QPushButton" name="save">
         <property name="text">
          <string>Save</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="8">
+      <item row="1" column="9">
        <widget class="QPushButton" name="rotate">
         <property name="text">
          <string>Rotate</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
+      <item row="1" column="0">
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -148,15 +205,25 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="7">
+      <item row="1" column="7">
        <widget class="QPushButton" name="draw">
         <property name="text">
          <string>Draw</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="11">
-       <spacer name="horizontalSpacer">
+      <item row="1" column="15">
+       <widget class="QSpinBox" name="width">
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="value">
+         <number>320</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="16">
+       <spacer name="horizontalSpacer_7">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -168,23 +235,10 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="3">
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="5">
-       <widget class="QPushButton" name="save_as">
+      <item row="1" column="11">
+       <widget class="QPushButton" name="resize">
         <property name="text">
-         <string>Save as</string>
+         <string>Resize</string>
         </property>
        </widget>
       </item>
