@@ -1,148 +1,172 @@
 import sys
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QPlainTextEdit, QFrame, QLabel, QFileDialog
+from PyQt5 import uic
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QPlainTextEdit, QFrame, QLabel, QFileDialog, QSpinBox
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import pyqtSlot
 
 import io
 
-from omniaUI import OmniaUI
+from omniaUI                import OmniaUI
 
 class App(QMainWindow):
 
-    def __init__(self):
-        super().__init__()
-        self.title = 'OmniaUI Editor'
-        self.left = 10
-        self.top = 10
-        self.width = 1200
-        self.height = 800
-        self.initUI()
-    
-    def initUI(self):
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
-    
-        # Create textbox
-        self.textbox = QPlainTextEdit(self)
-        self.textbox.move(20, 40)
-        self.textbox.resize(800,700)
-        
-        # Create a button in the window
-        self.draw_btn = QPushButton('Draw', self)
-        self.draw_btn.move(840,360)
-        self.rotate_btn = QPushButton('Rotate', self)
-        self.rotate_btn.move(950,360)
-        self.save_btn = QPushButton('Save', self)
-        self.save_btn.move(950,400)
-        self.open_btn = QPushButton('Open', self)
-        self.open_btn.move(840,400)
+	def __init__(self):
+		super(App, self).__init__()
+		uic.loadUi('editor.ui', self)
 
-        # Create filename label
-        self.file_label = QLabel(self)
-        self.file_label.setText("")
-        self.file_label.move(20,10)
-        self.file_label.resize(800, 30)
+		self.fileFullName=""
 
-        # Create image
-        self.ui_width = 320
-        self.ui_height = 240
+		# Create textbox
+		self.textbox = self.findChild(QPlainTextEdit,"textbox")
+		
+		# Create a button in the window
+		self.draw_btn = self.findChild(QPushButton,"draw")
+		self.rotate_btn = self.findChild(QPushButton,"rotate")
+		self.save_btn = self.findChild(QPushButton,"save")
+		self.save_as_btn = self.findChild(QPushButton,"save_as")
+		self.open_btn = self.findChild(QPushButton,"open")
+		self.resize_btn = self.findChild(QPushButton,"resize")
+		self.quit_btn = self.findChild(QPushButton,"quit")
 
-        self.img_label = QLabel(self)
-        self.img_label.text = "hello"
-        self.img_label.resize(320,240)
-        self.img_label.move(840,20)
-        self.img_label.setFrameShape(QFrame.Panel)        
 
-        self.omniaui = OmniaUI((self.ui_width, self.ui_height))
+		# Create a spin box in the window
+		self.height_box= self.findChild(QSpinBox,"height")
+		self.width_box= self.findChild(QSpinBox,"width")
 
-        self.image = QPixmap()
+		# Create filename label
+		self.file_label = self.findChild(QLabel,"file_label")
+		# Create image
+		ui_width = self.width_box.value()
+		ui_height = self.height_box.value()
 
-        self.draw()
+		self.img_label = self.findChild(QLabel,"img_label")
+		
+		self.img_label.setFrameShape(QFrame.Panel)        
 
-        self.img_label.setPixmap(self.image)
+		self.omniaui = OmniaUI((ui_width, ui_height))
 
-        # connect button to function on_click
-        self.draw_btn.clicked.connect(self.draw_ui)
-        self.rotate_btn.clicked.connect(self.rotate_ui)
-        self.save_btn.clicked.connect(self.save_ui)
-        self.open_btn.clicked.connect(self.open_ui)
-        self.show()
-    
-    def draw(self, xml_string=''):
-        if xml_string != '':
-            self.omniaui.loadFromXML(xml_string)
-        
-        img = self.omniaui.get_image()
-        w,h = img.size
-        #print(w,h)
-        self.img_label.resize(w,h)
-        
-        f = io.BytesIO()
-        img.save(f, "png")
-        buf = f.getbuffer()
-        self.image.loadFromData(buf)
-        del buf
-        f.close()
+		self.image = QPixmap()
 
-        self.img_label.setPixmap(self.image)
+		self.drawImg()
 
-    @pyqtSlot()
-    def rotate_ui(self):
-        self.omniaui.changeOrientation()
+		self.img_label.setPixmap(self.image)
 
-        orientation = self.omniaui.getOrientation()
+		# connect button to function on_click
+		self.draw_btn.clicked.connect(self.draw_ui)
+		self.rotate_btn.clicked.connect(self.rotate_ui)
+		self.save_btn.clicked.connect(self.save_ui)
+		self.save_as_btn.clicked.connect(self.save_as_ui)
+		self.open_btn.clicked.connect(self.open_ui)
+		self.resize_btn.clicked.connect(self.resize_ui)
+		self.quit_btn.clicked.connect(self.quit_ui)
 
-        self.draw()
+		self.showFullScreen()      
+	
+	def drawImg(self, xml_string=''):
+		if xml_string != '':
+			self.omniaui.loadFromXML(xml_string)
+		
+		img = self.omniaui.get_image()
+		w,h = img.size
+		#print(w,h)
+		
+		f = io.BytesIO()
+		img.save(f, "png")
+		buf = f.getbuffer()
+		self.image.loadFromData(buf)
+		del buf
+		f.close()
 
-        text = self.textbox.toPlainText()
+		self.img_label.setPixmap(self.image)
 
-        or_index = text.find("orientation=")
+	@pyqtSlot()
+	def rotate_ui(self):
+		self.omniaui.changeOrientation()
 
-        if or_index == -1:
-            #print(text.find("ui"))
-            start = text.find("<ui") + 3
-            end = text.find(">", start)
-            ui_attrib = text[ start : end ].strip()
-            ui_attrib += " orientation='"+orientation+"'"
+		orientation = self.omniaui.getOrientation()
+		width=self.width_box.value()
+		height=self.height_box.value()
+		self.height_box.setValue(width)
+		self.width_box.setValue(height)
 
-            text = text[:start] +" "+ ui_attrib + text[end:]
-            
-        else:
-            start = or_index + 13   # skip "orientation='"
-            end = text.find("'",start)
-            text = text[:start] + orientation + text[end:]
-        
-        self.textbox.setPlainText(text)     
+		self.drawImg()
 
-    @pyqtSlot()
-    def draw_ui(self):
-        textboxValue = self.textbox.toPlainText()
-        self.draw(textboxValue)
-    
-    @pyqtSlot()
-    def save_ui(self):
-        text = self.textbox.toPlainText()
-        name = QFileDialog.getSaveFileName(self, "Save File", '.', '.xml')[0]
-        if name != '':
-            self.file_label.setText(name + ".xml")
-        
+		text = self.textbox.toPlainText()
 
-        with open(name + ".xml", "w") as f:
-            #_ = f.read()
-            f.seek(0,0)
-            f.write(text)
-    
-    @pyqtSlot()
-    def open_ui(self):
-        fileFullName, _ = QFileDialog.getOpenFileName(self,"Open UI file", ".","XML files (*.xml)")
-        
-        self.file_label.setText(fileFullName)
-        with open(fileFullName, "r") as f:
-            content = f.read()
-            self.textbox.setPlainText(content)
-            self.draw(content)
+		or_index = text.find("orientation=")
+
+		if or_index == -1:
+			#print(text.find("ui"))
+			start = text.find("<ui") + 3
+			end = text.find(">", start)
+			ui_attrib = text[ start : end ].strip()
+			ui_attrib += " orientation='"+orientation+"'"
+
+			text = text[:start] +" "+ ui_attrib + text[end:]
+			
+		else:
+			start = or_index + 13   # skip "orientation='"
+			end = text.find("'",start)
+			text = text[:start] + orientation + text[end:]
+		
+		self.textbox.setPlainText(text)     
+
+	@pyqtSlot()
+	def draw_ui(self):
+		textboxValue = self.textbox.toPlainText()
+		self.drawImg(textboxValue)
+	
+	@pyqtSlot()
+	def save_as_ui(self):
+		text = self.textbox.toPlainText()
+		name = QFileDialog.getSaveFileName(self, "Save File", '.', '.xml')[0]
+		if name != '':
+			self.fileFullName=name + ".xml"
+			self.file_label.setText(self.fileFullName)
+	
+			with open(name + ".xml", "w") as f:
+				#_ = f.read()
+				f.seek(0,0)
+				f.write(text)
+	
+	@pyqtSlot()
+	def save_ui(self):
+		text = self.textbox.toPlainText()
+		if self.fileFullName != '':
+			self.file_label.setText(self.fileFullName)
+			with open(self.fileFullName , "w") as f:
+				#_ = f.read()
+				f.seek(0,0)
+				f.write(text)
+
+	@pyqtSlot()
+	def open_ui(self):
+		name, _ = QFileDialog.getOpenFileName(self,"Open UI file", ".","XML files (*.xml)")
+		
+		if name != '':
+			self.fileFullName=name
+			self.file_label.setText(self.fileFullName)
+			with open(self.fileFullName, "r") as f:
+				content = f.read()
+				self.textbox.setPlainText(content)
+				self.drawImg(content)
+
+	@pyqtSlot()
+	def resize_ui(self):
+		self.omniaui.height=self.height_box.value()
+		self.omniaui.width=self.width_box.value()
+		
+		#necessary to redraw the image frame on the UI
+		self.omniaui.changeOrientation()
+		self.omniaui.changeOrientation()
+
+		self.drawImg()
+
+	@pyqtSlot()
+	def quit_ui(self):
+		sys.exit(0)
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = App()
-    sys.exit(app.exec_())
+	app = QApplication(sys.argv)
+	ex = App()
+	sys.exit(app.exec_())
